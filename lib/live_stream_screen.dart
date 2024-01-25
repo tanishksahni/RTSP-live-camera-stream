@@ -9,14 +9,34 @@ class LiveStreamScreen extends StatefulWidget {
 }
 
 class _LiveStreamScreenState extends State<LiveStreamScreen> {
-  final VlcPlayerController _vlcPlayerController = VlcPlayerController.network(
-    //here add your http or rtsp link to stream
-      "http://195.196.36.242/mjpg/video.mjpg",
-      //http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg
+  late VlcPlayerController _vlcPlayerController;
 
-      hwAcc: HwAcc.auto,
-      autoPlay: true,
-      options: VlcPlayerOptions());
+  @override
+  void initState() {
+    super.initState();
+    _initializePlayer();
+  }
+
+  @override
+  void dispose() {
+    _vlcPlayerController.dispose();
+    _vlcPlayerController.stopRendererScanning();
+    super.dispose();
+  }
+
+  void _initializePlayer() {
+    try {
+      _vlcPlayerController = VlcPlayerController.network(
+        "http://195.196.36.242/mjpg/video.mjpg",
+        hwAcc: HwAcc.full,
+        autoPlay: true,
+        options: VlcPlayerOptions(),
+      );
+    } catch (e) {
+      // Handle initialization error, for example, show an error message
+      print("Error initializing VLC player: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +44,16 @@ class _LiveStreamScreenState extends State<LiveStreamScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          VlcPlayer(
-            controller: _vlcPlayerController,
-            aspectRatio: 16 / 9,
-            placeholder: const Center(
-              child: CircularProgressIndicator(),
+          InteractiveViewer(
+            scaleEnabled: true,
+            maxScale: 5,
+            minScale: 0.1,
+            child: VlcPlayer(
+              controller: _vlcPlayerController,
+              aspectRatio: 16 / 9,
+              placeholder: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           ),
         ],
