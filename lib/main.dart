@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rtsp_live_camera_stream/animatedscreen.dart';
 import 'package:rtsp_live_camera_stream/live_stream_screen.dart';
 
 void main() {
@@ -37,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const LiveStreamScreen(),
+      body: LiveStreamScreen(),
     );
   }
 }
